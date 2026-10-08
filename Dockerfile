@@ -1,12 +1,13 @@
-FROM php:8.3-apache-bookworm
-
-RUN a2dismod mpm_event mpm_worker mpm_prefork || true
-RUN a2enmod mpm_prefork rewrite
+FROM php:8.3-cli
 
 RUN docker-php-ext-install pdo_mysql
 
-COPY . /var/www/html/
+WORKDIR /app
 
-RUN chown -R www-data:www-data /var/www/html
+COPY . /app/
 
-EXPOSE 80
+RUN chown -R www-data:www-data /app
+
+EXPOSE 8080
+
+CMD ["sh", "-c", "php -S 0.0.0.0:${PORT:-8080} -t /app"]
